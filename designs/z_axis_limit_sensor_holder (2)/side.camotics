@@ -1,0 +1,25 @@
+{
+      "units": "metric",
+      "resolution-mode": "high",
+      "resolution": 1,
+      "tools": {
+        "1": {
+          "units": "metric",
+          "shape": "cylindrical",
+          "length": 10,
+          "diameter": 3,
+          "description": ""
+        }
+      },
+      "workpiece": {
+        "automatic": false,
+        "margin": 5,
+        "bounds": {
+          "min": [-60, 0, -27.5],
+          "max": [0, 13.5, 0]
+        }
+      },
+      "files": [
+        "side.nc"
+      ]
+    }

@@ -1,0 +1,25 @@
+{
+      "units": "metric",
+      "resolution-mode": "high",
+      "resolution": 1,
+      "tools": {
+        "1": {
+          "units": "metric",
+          "shape": "cylindrical",
+          "length": 10,
+          "diameter": 3,
+          "description": ""
+        }
+      },
+      "workpiece": {
+        "automatic": false,
+        "margin": 5,
+        "bounds": {
+          "min": [0, 0, -50],
+          "max": [27.5, 13.5, 0]
+        }
+      },
+      "files": [
+        "front.nc"
+      ]
+    }

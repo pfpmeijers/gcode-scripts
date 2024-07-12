@@ -1,0 +1,33 @@
+{
+      "units": "metric",
+      "resolution-mode": "high",
+      "resolution": 1,
+      "tools": {
+        "1": {
+          "units": "metric",
+          "shape": "ballnose",
+          "length": 10,
+          "diameter": 8,
+          "description": ""
+        },
+        "2": {
+          "units": "metric",
+          "shape": "cylindrical",
+          "length": 10,
+          "diameter": 3,
+          "description": ""
+        }
+      },
+      "workpiece": {
+        "automatic": false,
+        "margin": 5,
+        "bounds": {
+          "min": [0, 0, -20],
+          "max": [360, 60, 0]
+        }
+      },
+      "files": [
+        "raamlat.3mm_flat.nc",
+        "raamlat.8mm_ball.nc"
+      ]
+    }
