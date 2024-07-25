@@ -1,28 +1,22 @@
-from typing import Tuple
+def expand_xy_rect(xl: float, xr: float, yf: float, yb: float,
+                   expand: float = 0) \
+        -> tuple[float, float, float, float]:
+    """
+    Adjusts a set of xy-plane rectangle coordinates by means of contracting or expanding all sides.
 
-from gcode import mill_line
-from state import state
+    :param xl: Left side coordinate of the rectangle.
+    :param xr: Right side coordinate of the rectangle.
+    :param yf: Front side coordinate of the rectangle.
+    :param yb: Back side coordinate of the rectangle.
+    :param expand: The amount to expand the rectangle on all sides outward.
+    :return: Adjusted rectangle coordinates.
+    """
+
+    xl -= expand
+    xr += expand
+    yf -= expand
+    yb += expand
+
+    return xl, xr, yf, yb
 
 
-def get_sorted_rect_corners(xl: float, xr: float, yf: float, yb: float) -> Tuple[Tuple[float, float], ...]:
-
-    distances = []
-    corners = (xl, yf), (xl, yb), (xr, yb), (xr, yf)
-    for i, corner in enumerate(corners):
-        distances.append((state.get_xy_distance(*corner), i))
-    i = sorted(distances, key=lambda distance: distance[0])[0][1]  # Index of closest corner.
-    if i:
-        corners = corners[i:] + corners[:i]
-    return corners
-
-
-def get_closest_rect_corner(xl: float, xr: float, yf: float, yb: float) -> Tuple[float, float]:
-
-    return get_sorted_rect_corners(xl, xr, yf, yb)[0]
-
-
-def mill_rect(xl: float, xr: float, yf: float, yb: float, z: float):
-
-    corners = get_sorted_rect_corners(xl, xr, yf, yb)
-    for x, y in corners:
-        z = mill_line(x, y, z)

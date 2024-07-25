@@ -1,10 +1,10 @@
 import sys; sys.path.append('../../')
 
 from common import *
-from gcode import select_tool
-from circle_pocket import create_circle_pocket
-from rect_pocket import create_rect_pocket
-from line_slot import create_x_line_slot
+from GCode import select_tool
+from cuts.circle_pocket import create_circle_pocket
+from cuts.rect_pocket import create_rect_pocket
+from cuts.line_slot import create_x_line_slot
 
 X1 = 15
 X2 = 18.5

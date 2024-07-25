@@ -2,17 +2,17 @@ import sys
 
 sys.path.append('../../')
 
-import config, presets.wood_3mm_flat
+import config
 
 config.TAB_HEIGHT = 2
 config.TAB_DISTANCE = 50
 config.TAB_WIDTH = 1
-config.DEPTH_OF_CUT = 2
+gcode.MILL.DEPTH_OF_CUT = 2
 
-from basics import start, finish
-from transformation import transformation
-from arc_slot import create_arc_slot
-from line_slot import create_line_slot
+from cuts.basics import start, finish
+from Transformation import transformation
+from cuts.arc_slot import create_arc_slot
+from cuts.line_slot import create_line_slot
 
 # dimensions: 372 x 94 x 20
 
@@ -36,7 +36,7 @@ YFR = YBR - DY
 
 start(tool=2)
 
-transformation.rotate(a=6.5)
+transformation.rotate_xy(a=6.5)
 
 create_arc_slot(XL, XR, YBL, YBR, -H, 0, R, shift=RM)
 create_line_slot(XR, XR, YBR, YFR, -H, 0, expand=RM, shift=-RM)

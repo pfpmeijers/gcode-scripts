@@ -1,12 +1,9 @@
 from math import sqrt
-from typing import Tuple
 
-from utils.constraints import check_z_coordinate_constraints
-from utils.misc import normalize
 from utils.polar import shift_radial
 
 
-def get_arc_center(xb: float, xe: float, yb: float, ye: float, r: float, clockwise: bool) -> Tuple[float, float]:
+def get_arc_center(xb: float, xe: float, yb: float, ye: float, r: float, clockwise: bool) -> tuple[float, float]:
 
     # See https://www.quora.com/How-do-we-find-the-equation-of-a-circle-when-two-points-on-it-and-the-radius-of-a-circle-are-given
     dx = xe - xb
@@ -23,7 +20,9 @@ def get_arc_center(xb: float, xe: float, yb: float, ye: float, r: float, clockwi
     return xc, yc
 
 
-def shift_arc(xc: float, xb: float, xe: float, yc: float, yb: float, ye: float, r: float, shift: float) -> Tuple[float, float, float, float, float]:
+def shift_arc(xc: float, xb: float, xe: float, yc: float, yb: float, ye: float, r: float,
+              shift: float) \
+        -> tuple[float, float, float, float, float]:
 
     if shift != 0:
         xb, yb = shift_radial(xb, yb, xc, yc, shift)
@@ -31,13 +30,3 @@ def shift_arc(xc: float, xb: float, xe: float, yc: float, yb: float, ye: float, 
         r += shift
 
     return xb, xe, yb, ye, r
-
-
-def preprocess_arc(xb: float, xe: float, yb: float, ye: float, zb: float, zt: float, r: float, clockwise: bool,
-                   shift: float = 0.0) -> Tuple[float, float, float, float, float, float, float]:
-
-    check_z_coordinate_constraints(zb, zt)
-    xc, yc = get_arc_center(xb, xe, yb, ye, r, clockwise)
-    xb, xe, yb, ye, r = shift_arc(xc, xb, xe, yc, yb, ye, r, shift)
-
-    return xb, xe, yb, ye, xc, yc, r

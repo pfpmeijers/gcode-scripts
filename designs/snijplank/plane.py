@@ -1,9 +1,7 @@
 import sys; sys.path.append('../../')
 
-import presets.wood_4mm_flat
-from gcode import select_tool
-from hole import create_hole
-from rect_pocket import create_rect_pocket
+from GCode import select_tool
+from cuts.rect_pocket import create_rect_pocket
 
 import config
 config.WIDTH_OF_CUT = 10

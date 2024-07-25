@@ -1,10 +1,9 @@
 from math import sqrt, pi, atan, sin, cos
-from typing import Tuple
 
-from utils.misc import normalize
+from utils.line import get_normalized_xy_direction
 
 
-def to_polar(x: float, y: float, xc: float = 0, yc: float = 0) -> Tuple[float, ...]:
+def to_polar(x: float, y: float, xc: float = 0, yc: float = 0) -> tuple[float, ...]:
 
     x -= xc
     y -= yc
@@ -19,7 +18,7 @@ def to_polar(x: float, y: float, xc: float = 0, yc: float = 0) -> Tuple[float, .
     return r, a
 
 
-def from_polar(r: float, a: float, xc: float = 0, yc: float = 0) -> Tuple[float, ...]:
+def from_polar(r: float, a: float, xc: float = 0, yc: float = 0) -> tuple[float, ...]:
 
     return r * cos(a) + xc, r * sin(a) + yc
 
@@ -33,9 +32,9 @@ def get_angle_delta(a1: float, a2: float) -> float:
     return da
 
 
-def shift_radial(x: float, y: float, xc: float, yc: float, dr: float) -> Tuple[float, float]:
+def shift_radial(x: float, y: float, xc: float, yc: float, dr: float) -> tuple[float, float]:
 
-    dx, dy = normalize(xc, x, yc, y)
+    dx, dy = get_normalized_xy_direction(xc, x, yc, y)
     x += dr * dx
     y += dr * dy
 

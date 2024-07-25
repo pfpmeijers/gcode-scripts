@@ -1,10 +1,4 @@
-import config
-
-
-def loop_z(zb: float, zt: float, dz: float = None):
-
-    if dz is None:
-        dz = config.DEPTH_OF_CUT
+def loop_z(zb: float, zt: float, dz: float):
 
     z = zt
     zp = None

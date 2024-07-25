@@ -1,9 +1,9 @@
 import sys; sys.path.append('../../')
 
 from common import *
-from gcode import select_tool
-from hole import create_hole
-from rect_pocket import create_rect_pocket
+from GCode import select_tool
+from cuts.hole import create_hole
+from cuts.rect_pocket import create_rect_pocket
 
 
 select_tool()

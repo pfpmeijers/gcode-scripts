@@ -2,13 +2,11 @@ import sys
 
 sys.path.append('../../')
 
-import config, presets.wood_1mm_flat
+gcode.MILL.DEPTH_OF_CUT = 2
 
-config.DEPTH_OF_CUT = 2
-
-from basics import start, finish
-from arc_slot import create_arc_slot
-from line_slot import create_line_slot
+from cuts.basics import start, finish
+from cuts.arc_slot import create_arc_slot
+from cuts.line_slot import create_line_slot
 
 # Text size
 DXT = 250

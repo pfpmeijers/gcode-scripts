@@ -1,8 +1,8 @@
 import sys; sys.path.append('../../')
 
 from common import *
-from gcode import select_tool
-from rect_pocket import create_rect_pocket
+from GCode import select_tool
+from cuts.rect_pocket import create_rect_pocket
 
 X1 = -4
 X2 = -23
