@@ -230,10 +230,18 @@ class GCode:
         if zr is not None and zr <= zt:
             raise ValueError("Retract z coordinate must be above top z coordinate")
 
-    def check_coordinate_constraints(self,
-                                     xl: float, xr: float, yf: float, yb: float, zb: float, zt: float, zr: float = None,
-                                     mill_fit: bool = False):
+    def verify_bbox(self,
+                    xl: float, xr: float, yf: float, yb: float, zb: float, zt: float, zr: float = None,
+                    mill_fit: bool = False):
 
         self.check_x_coordinate_constraints(xl, xr, mill_fit)
         self.check_y_coordinate_constraints(yf, yb, mill_fit)
         self.check_z_coordinate_constraints(zb, zt, zr)
+
+    def verify_position(self, x: float = None, y: float = None, z: float = None):
+        if x is not None and x != self.router_state.x:
+            raise ValueError(f"Router x position {self.router_state.x} does not match expectation {x}")
+        if y is not None and y != self.router_state.y:
+            raise ValueError(f"Router y position {self.router_state.y} does not match expectation {y}")
+        if z is not None and z != self.router_state.z:
+            raise ValueError(f"Router z position {self.router_state.z} does not match expectation {z}")

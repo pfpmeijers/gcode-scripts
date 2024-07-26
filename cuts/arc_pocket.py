@@ -4,11 +4,9 @@ import config
 from RouterState import state
 from arc_slot import create_arc_slot
 from line_slot import create_line_slot
-from utils.arc import preprocess_arc, get_arc_center, shift_arc
+from utils.arc import get_arc_center, shift_arc
 from utils.loop import loop_z
-from utils.main import main_call
 from utils.misc import swap
-
 
 def create_arc_pocket(gcode: GCode,
                       xb1: float, xe1: float, yb1: float, ye1: float, r1: float, clockwise1: bool,

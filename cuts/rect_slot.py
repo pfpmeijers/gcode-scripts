@@ -1,5 +1,5 @@
 from GCode import GCode
-from cuts.line_slot import mill_tabbed_line_slot
+from cuts.line_slot import mill_line_slot, mill_line_ramp
 
 
 def get_sorted_rect_corners(gcode: GCode,
@@ -16,32 +16,9 @@ def get_sorted_rect_corners(gcode: GCode,
     return corners
 
 
-def get_closest_rect_corner(gcode: GCode,
-                            xl: float, xr: float, yf: float, yb: float) \
-        -> tuple[float, float]:
-
-    return get_sorted_rect_corners(gcode, xl, xr, yf, yb)[0]
-
-
-def mill_rect(gcode: GCode, xl: float, xr: float, yf: float, yb: float):
-
-    corners = get_sorted_rect_corners(gcode, xl, xr, yf, yb)
-    gcode.mill_line(*corners[0])
-    for x, y in corners[1:] + [corners[0]]:
-        gcode.mill_line(x, y)
-
-
-def mill_line_ramp(gcode: GCode,
-                   x: float, y: float, z: float, zb: float, d: float, ramp_length: float) \
-        -> float:
-
-    z = max(z - gcode.depth_of_cut * d / ramp_length, zb)
-    gcode.mill_line(x, y, z, gcode.get_ramp_rate(ramp_length))
-    return z
-
-
 def mill_rect_ramp(gcode: GCode,
-                   xl: float, xr: float, yf: float, yb: float, z: float, zb: float) -> float:
+                   xl: float, xr: float, yf: float, yb: float, z: float, zb: float) \
+        -> float:
 
     dx = xr - xl
     dy = yb - yf
@@ -51,45 +28,48 @@ def mill_rect_ramp(gcode: GCode,
     px = corners[3][0]
     for x, y in corners[1:] + [corners[0]]:
         d = dx if x != px else dy
-        z = mill_line_ramp(gcode, x, y, z, zb, d, ramp_length)
+        z = mill_line_ramp(gcode, x, y, z, zb, d / ramp_length, ramp_length)
         px = x
     return z
 
 
-def mill_rect_slot(gcode: GCode, xl: float, xr: float, yf: float, yb: float, zb: float, zt: float):
+def get_closest_rect_corner(gcode: GCode,
+                            xl: float, xr: float, yf: float, yb: float) \
+        -> tuple[float, float]:
 
-    gcode.check_coordinate_constraints(xl, xr, yf, yb, zb, zt)
-    x0, y0 = get_closest_rect_corner(gcode, xl, xr, yf, yb)
-    x, y, z = x0, y0, zt
-
-    if zt - zb > gcode.depth_of_cut:
-        gcode.approach(x, y, z)
-        while z > zb:
-            z = mill_rect_ramp(gcode, xl, xr, yf, yb, z, zb)
-    else:
-        gcode.plunge(zb)
-    mill_rect(gcode, xl, xr, yf, yb)
+    return get_sorted_rect_corners(gcode, xl, xr, yf, yb)[0]
 
 
-def mill_tabbed_rect_slot(gcode: GCode,
-                          xl: float, xr: float, yf: float, yb: float, zb: float, zt: float):
-
-    gcode.check_coordinate_constraints(xl, xr, yf, yb, zb, zt)
+def mill_rect(gcode: GCode,
+              xl: float, xr: float, yf: float, yb: float):
 
     corners = get_sorted_rect_corners(gcode, xl, xr, yf, yb)
-    dt = 0
-    for ib in range(4):
-        ie = (ib + 1) % 4
-        dt = mill_tabbed_line_slot(gcode, corners[ib][0], corners[ie][0], corners[ib][1], corners[ie][1], zb, zt, dt)
+    gcode.mill_line(*corners[0])
+    for x, y in corners[1:] + [corners[0]]:
+        gcode.mill_line(x, y)
 
 
-def create_rect_slot(gcode: GCode,
-                     xl: float, xr: float, yf: float, yb: float, zb: float, zt: float,
-                     tabs: bool = False):
+def mill_rect_slot(gcode: GCode,
+                   xl: float, xr: float, yf: float, yb: float, zb: float, zt: float,
+                   tabs: bool = False):
 
-    gcode.retract()
+    gcode.verify_bbox(xl, xr, yf, yb, zb, zt)
+
     if tabs:
-        mill_tabbed_rect_slot(gcode, xl, xr, yf, yb, zb, zt)
-    else:
-        mill_rect_slot(gcode, xl, xr, yf, yb, zb, zt)
-    gcode.retract()
+        corners = get_sorted_rect_corners(gcode, xl, xr, yf, yb)
+        dt = 0
+        for ib in range(4):
+            ie = (ib + 1) % 4
+            dt = mill_line_slot(gcode, corners[ib][0], corners[ie][0], corners[ib][1], corners[ie][1], zb, zt, tabs=True, dt=dt)
+
+    else:  # No tabs
+        x0, y0 = get_closest_rect_corner(gcode, xl, xr, yf, yb)
+        x, y, z = x0, y0, zt
+
+        if zt - zb > gcode.depth_of_cut:
+            gcode.approach(x, y, z)
+            while z > zb:
+                z = mill_rect_ramp(gcode, xl, xr, yf, yb, z, zb)
+        else:
+            gcode.plunge(zb)
+        mill_rect(gcode, xl, xr, yf, yb)

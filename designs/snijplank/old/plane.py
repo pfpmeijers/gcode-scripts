@@ -1,4 +1,4 @@
-import sys; sys.path.append('../../')
+import sys; sys.path.append('../../../')
 
 from GCode import select_tool
 from cuts.rect_pocket import create_rect_pocket

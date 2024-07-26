@@ -1,6 +1,6 @@
 import unittest
 
-from cuts.rect_slot import create_rect_slot
+from cuts.rect_slot import mill_rect_slot
 from tests.UnitTest import UnitTest
 
 
@@ -11,14 +11,14 @@ class TransformationUnitTest(UnitTest):
         self.gcode.transformation.rotate_xy(25)
         self.gcode.transformation.translate(5, 5, 0)
         self.gcode.start()
-        create_rect_slot(self.gcode, 0, 50, 0, 25, -6, 0, tabs=True)
+        mill_rect_slot(self.gcode, 0, 50, 0, 25, -6, 0, tabs=True)
         self.gcode.finish()
 
     def test_rect_slot_z(self):
         self.gcode.transformation.scale(1, 2)
         self.gcode.transformation.translate(0, 0, 3)
         self.gcode.start()
-        create_rect_slot(self.gcode, 0, 50, 0, 25, -6, 0, tabs=True)
+        mill_rect_slot(self.gcode, 0, 50, 0, 25, -6, 0, tabs=True)
         self.gcode.finish()
 
 

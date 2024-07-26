@@ -12,7 +12,7 @@ def mill_rect_pocket(gcode: GCode,
 
     """ Inline version (i.e. without retraction) of create_rect_pocket(). """
 
-    gcode.check_coordinate_constraints(xl, xr, yf, yb, zb, zt, mill_fit=True)
+    gcode.verify_bbox(xl, xr, yf, yb, zb, zt, mill_fit=True)
 
     multi_layer = zt - zb > gcode.depth_of_cut
     multi_lane = yb - yf > gcode.mill_diameter

@@ -1,19 +1,19 @@
 import unittest
 
-from cuts.rect_slot import mill_rect_slot
+from cuts.circle_slot import mill_circle_slot
 from tests.UnitTest import UnitTest
 
 
-class RectSlotUnitTest(UnitTest):
+class CircleSlotUnitTest(UnitTest):
 
     def test_basic(self):
         self.gcode.start()
-        mill_rect_slot(self.gcode, 0, 50, 0, 25, -5, 0)
+        mill_circle_slot(self.gcode, 5, 5, -5, 0, 50)
         self.gcode.finish()
 
     def test_tabbed(self):
         self.gcode.start()
-        mill_rect_slot(self.gcode, 0, 50, 0, 25, -6, 0, tabs=True)
+        mill_circle_slot(self.gcode, 5, 5, -5, 0, 50, tabs=True)
         self.gcode.finish()
 
 

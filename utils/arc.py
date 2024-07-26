@@ -1,6 +1,6 @@
 from math import sqrt
 
-from utils.polar import shift_radial
+from utils.polar import shift_radial, to_polar, from_polar
 
 
 def get_arc_center(xb: float, xe: float, yb: float, ye: float, r: float, clockwise: bool) -> tuple[float, float]:
@@ -20,11 +20,32 @@ def get_arc_center(xb: float, xe: float, yb: float, ye: float, r: float, clockwi
     return xc, yc
 
 
-def shift_arc(xc: float, xb: float, xe: float, yc: float, yb: float, ye: float, r: float,
+def expand_arc(xc: float, xb: float, xe: float, yc: float, yb: float, ye: float,
+               r: float, clockwise: bool,
+               expand: float) \
+        -> tuple[float, float, float, float]:
+
+    if expand:
+        rb, ab = to_polar(xb - xc, yb - yc)
+        re, ae = to_polar(xe - xc, ye - yc)
+        da = expand / r
+        # clockwise indicates the orientation between the arc's begin and end point.
+        # Polar coordinate angles increase counter-clockwise.
+        # Hence, when expanding a clockwise arc, then the begin angle needs to increase and end angle decrease.
+        dab = da if clockwise else -da
+        dae = -da if clockwise else da
+        xb, yb = from_polar(r, ab + dab, xc, yc)
+        xe, ye = from_polar(r, ae + dae, xc, yc)
+
+    return xb, xe, yb, ye
+
+
+def shift_arc(xc: float, xb: float, xe: float, yc: float, yb: float, ye: float,
+              r: float,
               shift: float) \
         -> tuple[float, float, float, float, float]:
 
-    if shift != 0:
+    if shift:
         xb, yb = shift_radial(xb, yb, xc, yc, shift)
         xe, ye = shift_radial(xe, ye, xc, yc, shift)
         r += shift

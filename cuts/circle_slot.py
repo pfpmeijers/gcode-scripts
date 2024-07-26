@@ -1,51 +1,43 @@
 from math import pi
 
-from cuts.basics import retract, approach
-from utils.main import main_call
-
-from cuts.ramp import get_ramp_rate
+from GCode import GCode
+from cuts.arc_slot import mill_arc_ramp, mill_arc_slot
 
 
-def mill_circle_slot(xc: float, yc: float, zb: float, zt: float, r: float):
+def mill_circle_ramp(gcode: GCode,
+                     xc: float, yc: float, zb: float, z: float,
+                     r: float) \
+        -> float:
 
-    x = xc - r
-    y = yc
-    z = zt
-    approach(x, y, z)
-    while z > zb:
-        z = mill_circle_ramp(xc, yc, z, zb, r)
-    mill_circle_ramp(xc, yc, z, zb, r)
+    gcode.verify_position(xc - r, yc, z)
 
-
-def create_circle_slot(xc: float, yc: float, zb: float, zt: float, r: float):
-
-    retract()
-    mill_circle_slot(xc, yc, zb, zt, r)
-    retract()
-
-
-if __name__ == "__main__":
-
-    main_call(create_circle_slot)
-
-
-def mill_arc_ramp(x: float, y: float, z: float, zb: float, r: float, d: float, ramp_length: float, ramp_rate: int, clockwise: bool = True) -> float:
-
-    z = max(z - gcode.MILL.DEPTH_OF_CUT * d / ramp_length, zb)
-    mill_arc(x, y, z, r, clockwise, ramp_rate)
+    d = 2 * pi * r
+    ramp_rate = gcode.get_ramp_rate(d)
+    z = mill_arc_ramp(gcode, xc + r, yc, zb, z, r, ramp_fraction=0.5, feed_rate=ramp_rate)
+    z = mill_arc_ramp(gcode, xc - r, yc, zb, z, r, ramp_fraction=0.5, feed_rate=ramp_rate)
 
     return z
 
 
-def mill_circle_ramp(xc: float, yc: float, z: float, zb: float, r: float) -> float:
+def mill_circle_slot(gcode: GCode,
+                     xc: float, yc: float, zb: float, zt: float,
+                     r: float,
+                     tabs: bool = False):
 
-    # TODO: Optimize direction
-    dr = 2 * pi * r / 4
-    ramp_length = 4 * dr
-    ramp_rate = get_ramp_rate(ramp_length)
-    z = mill_arc_ramp(xc, yc + r, z, zb, r, dr, ramp_length, ramp_rate)
-    z = mill_arc_ramp(xc + r, yc, z, zb, r, dr, ramp_length, ramp_rate)
-    z = mill_arc_ramp(xc, yc - r, z, zb, r, dr, ramp_length, ramp_rate)
-    z = mill_arc_ramp(xc - r, yc, z, zb, r, dr, ramp_length, ramp_rate)
+    x, y, z = xc - r, yc, zt
+    gcode.approach(x, y, z)
 
-    return z
+    if tabs:
+        zbt = zb + gcode.tab_height
+        if zt > zbt:
+            mill_circle_slot(gcode, xc, yc, zbt, zt, r)
+            zt = zbt
+
+        dt = 0
+        dt = mill_arc_slot(gcode, xc - r, xc + r, yc, yc, zb, zt, r, start_closest=False, tabs=True, dt=dt)
+        __ = mill_arc_slot(gcode, xc + r, xc - r, yc, yc, zb, zt, r, start_closest=False, tabs=True, dt=dt)
+
+    else:
+        while z > zb:
+            z = mill_circle_ramp(gcode, xc, yc, zb, z, r)
+        mill_circle_ramp(gcode, xc, yc, zb, z, r)
